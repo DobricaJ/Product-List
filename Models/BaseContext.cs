@@ -1,4 +1,5 @@
 ﻿using System;
+using FileContextCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -6,18 +7,20 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Product_List.Models
 {
-    public partial class ProductListContext : DbContext
+    public abstract class BaseContext : DbContext
     {
-        public ProductListContext()
-        {
-        }
 
-        public ProductListContext(DbContextOptions<ProductListContext> options)
+        public BaseContext(DbContextOptions options)
             : base(options)
         {
         }
 
         public virtual DbSet<Product> Products { get; set; }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseFileContextDatabase();
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,10 +53,6 @@ namespace Product_List.Models
                     .HasMaxLength(100)
                     .IsUnicode(false);
             });
-
-            OnModelCreatingPartial(modelBuilder);
         }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

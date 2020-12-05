@@ -1,4 +1,6 @@
 using FileContextCore;
+using FileContextCore.FileManager;
+using FileContextCore.Serializer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +14,9 @@ namespace Product_List
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IHostEnvironment _hostingEnvironment;
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
@@ -26,11 +28,11 @@ namespace Product_List
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = Configuration.GetConnectionString("ProductListDatabase");
-            var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, @"StorageFiles\jsonProducts.json");
+            var connection = Configuration.GetConnectionString("ServerDatabase");
+            var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, Configuration.GetConnectionString("JsonDatabase"));
 
             services.AddDbContext<ServerProductListContext>(options => options.UseSqlServer(connection));
-            services.AddDbContext<JsonProductListContext>(options => options.UseFileContextDatabase(location:filePath));
+            services.AddDbContext<JsonProductListContext>(options => options.UseFileContextDatabase<JSONSerializer, DefaultFileManager >(location:filePath));
 
             services.AddControllersWithViews();
         }

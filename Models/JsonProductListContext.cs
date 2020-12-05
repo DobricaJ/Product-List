@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using FileContextCore;
+using FileContextCore.FileManager;
+using FileContextCore.Serializer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -15,11 +17,6 @@ namespace Product_List.Models
         public JsonProductListContext(DbContextOptions<JsonProductListContext> options)
             : base(options)
         {
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseFileContextDatabase();
         }
     }
 }

@@ -11,17 +11,52 @@ namespace Product_List.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly ProductListContext _context;
+        private static bool UseJsonAsStorage = false;
 
-        public ProductsController(ProductListContext context)
+        private  BaseContext _context;
+        private readonly ServerProductListContext _serverContext;
+        private readonly JsonProductListContext _jsonContext;
+
+        public ProductsController(ServerProductListContext serverContext, JsonProductListContext jsonContext)
         {
-            _context = context;
+            _serverContext = serverContext;
+            _jsonContext = jsonContext;
+
+            SetStorage();
+        }
+
+        private void SetStorage()
+        {
+            if (UseJsonAsStorage)
+            {
+                _context = _jsonContext;
+            }
+            else
+            {
+                _context = _serverContext;
+            }
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
             return View(await _context.Products.ToListAsync());
+        }
+
+        public IActionResult ChangeStorage()
+        {
+            if (UseJsonAsStorage)
+            {
+                UseJsonAsStorage = false;
+            }
+            else
+            {
+                UseJsonAsStorage = true;
+            }
+
+            SetStorage();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Details/5
